@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misi Pengembara 40 Hadis: Ekspedisi Mencari Cahaya Hikmah</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --secondary: #f9a825;
+            --accent: #0288d1;
+            --bg-light: #f4fbf7;
+            --text-color: #263238;
+            --card-bg: #ffffff;
+            --success: #4caf50;
+            --error: #f44336;
+            --radius: 18px;
+            --shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+        }
+
+        #game-container {
+            width: 100%;
+            max-width: 960px;
+            min-height: 640px;
+            background: #ffffff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 4px solid #a5d6a7;
+        }
+
+        /* BAR ATAS & KAWALAN AUDIO/DATA */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .header-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.35);
+            transform: translateY(-2px);
+        }
+
+        /* SKRIN PERMAINAN */
+        .screen {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .screen.active {
+            display: flex;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* SKRIN UTAMA */
+        #main-menu {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #f1f8e9 0%, #ded2f9 100%);
+            gap: 20px;
+        }
+
+        .hero-banner {
+            background: white;
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            max-width: 650px;
+            width: 100%;
+            border: 3px solid #c8e6c9;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            font-size: 2.1rem;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .subtitle {
+            color: #f57f17;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .avatar-box {
+            width: 120px;
+            height: 120px;
+            margin: 15px auto;
+            background: #fff9c4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border: 4px solid var(--secondary);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;
+            margin: 15px auto 0 auto;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background: #0277bd;
+        }
+
+        .btn-warning {
+            background: #f57c00;
+        }
+
+        .btn-warning:hover {
+            background: #e65100;
+        }
+
+        /* PETA PENGEMBARAAN */
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            width: 100%;
+        }
+
+        .world-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            border: 3px solid #e0e0e0;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .world-card.unlocked {
+            border-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .world-card.unlocked:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.18);
+        }
+
+        .world-card.locked {
+            opacity: 0.6;
+            background: #f5f5f5;
+            filter: grayscale(0.8);
+        }
+
+        .world-icon {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+        }
+
+        .world-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+        }
+
+        .world-badge {
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            background: #e8f5e9;
+            color: var(--primary-dark);
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .crystal-indicator {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 1.5rem;
+        }
+
+        /* SKRIN CABARAN / KUIZ */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #e8f5e9;
+            padding: 12px 20px;
+            border-radius: 14px;
+            margin-bottom: 18px;
+            font-weight: bold;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            background: #ffffff;
+            border: 2px solid #c8e6c9;
+            padding: 22px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.5;
+            color: #1b5e20;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option-btn {
+            background: #fafafa;
+            border: 2px solid #e0e0e0;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .option-btn:hover {
+            background: #e8f5e9;
+            border-color: var(--primary);
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary);
+            background: #c8e6c9;
+        }
+
+        .option-prefix {
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* MODAL MAKLUM BALAS */
+        .modal {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 28px;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+            border: 4px solid var(--primary);
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .explanation-box {
+            background: #f1f8e9;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border-left: 5px solid var(--primary);
+        }
+
+        /* SKRIN KEMENANGAN & TAMAT DUNIA */
+        .summary-box {
+            background: #f9fbe7;
+            padding: 25px;
+            border-radius: 20px;
+            border: 3px dashed #c0ca33;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .crystals-collected {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-size: 2.5rem;
+            margin: 15px 0;
+        }
+
+        .teacher-note {
+            font-size: 0.8rem;
+            color: #d32f2f;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        /* KEBERSAAN & LAYOUT RESPONSIIF */
+        @media (max-width: 600px) {
+            .map-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 { font-size: 1.6rem; }
+            .hero-banner { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- BAR UTAMA -->
+    <header>
+        <div class="header-title">
+            <span>📖</span> MISI PENGEMBARA 40 HADIS
+        </div>
+        <div class="header-controls">
+            <button class="icon-btn" id="sound-btn" onclick="toggleSound()">🔊 Bunyi: ON</button>
+            <button class="icon-btn" onclick="confirmReset()">🔄 Mula Semula</button>
+        </div>
+    </header>
+
+    <!-- 1. SKRIN UTAMA -->
+    <div id="screen-main" class="screen active">
+        <div class="hero-banner">
+            <h1>EKSPEDISI MENCARI CAHAYA HIKMAH</h1>
+            <div class="subtitle">Pengembaraan Ilmu Hadis Sekolah Rendah</div>
+            <div class="avatar-box">🧭</div>
+            <p style="margin-bottom: 15px; line-height: 1.5;">
+                Selamat datang, Pengembara Muda! Kerajaan Hikmah memerlukan bantuan anda untuk mengumpulkan 4 Kristal Kebijaksanaan melalui kefahaman Hadis Rasulullah SAW.
+            </p>
+            <div class="btn-group">
+                <button class="btn" onclick="showScreen('screen-mode')">🚀 MULA PENGEMBARAAN</button>
+                <button class="btn btn-secondary" onclick="showScreen('screen-instructions')">📜 CARA BERMAIN</button>
+                <button class="btn btn-warning" onclick="showScreen('screen-about')">ℹ️ TENTANG PERMAINAN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SKRIN PILIHAN MOD -->
+    <div id="screen-mode" class="screen">
+        <h2 style="text-align: center; color: var(--primary-dark); margin-bottom: 15px;">PILIH MOD PERMAINAN</h2>
+        <div style="max-width: 500px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 15px;">
+            <div class="world-card unlocked" onclick="selectMode('adventure')">
+                <div class="world-icon">🏕️</div>
+                <div class="world-title">MOD PENGEMBARAAN</div>
+                <p style="font-size: 0.9rem;">Jawab 5 soalan pilihan secara rawak bagi setiap dunia yang diterokai.</p>
+            </div>
+            <div class="world-card unlocked" onclick="selectMode('practice')">
+                <div class="world-icon">📚</div>
+                <div class="world-title">MOD LATIHAN</div>
+                <p style="font-size: 0.9rem;">Jawab kesemua 20 soalan mengikut lokasi dunia pilihan anda.</p>
+            </div>
+            <div class="world-card unlocked" onclick="selectMode('full')">
+                <div class="world-icon">🏆</div>
+                <div class="world-title">MOD CABARAN PENUH</div>
+                <p style="font-size: 0.9rem;">Cabaran marathon! Jawab kesemua 60 soalan dari Dunia 1 hingga Dunia 4.</p>
+            </div>
+            <button class="btn btn-secondary" onclick="showScreen('screen-main')">⬅️ KEMBALI</button>
+        </div>
+    </div>
+
+    <!-- 2. SKRIN CARA BERMAIN -->
+    <div id="screen-instructions" class="screen">
+        <h2 style="color: var(--primary-dark); margin-bottom: 15px;">📜 Cara Bermain</h2>
+        <div style="line-height: 1.8; background: #f1f8e9; padding: 20px; border-radius: 16px; margin-bottom: 20px;">
+            <ol style="margin-left: 20px;">
+                <li><strong>Pilih Dunia:</strong> Terdapat 4 dunia pengembaraan. Dunia baharu akan dibuka setelah anda menyelesaikan dunia sebelumnya.</li>
+                <li><strong>Jawab Soalan:</strong> Pilih jawapan yang paling tepat daripada pilihan A, B, C, atau D.</li>
+                <li><strong>Kumpul Mata & Kristal:</strong> Setiap jawapan betul memberikan mata mengikut aras kesukaran:
+                    <ul>
+                        <li>Dunia 1 (Mudah): 10 mata / soalan</li>
+                        <li>Dunia 2 & 3 (Sederhana/Aplikasi): 15 mata / soalan</li>
+                        <li>Dunia 4 (Susah): 20 mata / soalan</li>
+                    </ul>
+                </li>
+                <li><strong>Gunakan Petunjuk:</strong> Jika sukar, tekan butang Petunjuk untuk mendapatkan panduan mesra.</li>
+                <li><strong>Menjadi Pengembara Hikmah:</strong> Kumpulkan keempat-empat Kristal Kebijaksanaan untuk menyelamatkan Kerajaan Hikmah!</li>
+            </ol>
+        </div>
+        <button class="btn" style="max-width: 200px; margin: 0 auto;" onclick="showScreen('screen-main')">KEMBALI</button>
+    </div>
+
+    <!-- 3. SKRIN TENTANG PERMAINAN -->
+    <div id="screen-about" class="screen">
+        <h2 style="color: var(--primary-dark); margin-bottom: 15px;">ℹ️ Tentang Permainan</h2>
+        <div style="line-height: 1.6; background: #e3f2fd; padding: 20px; border-radius: 16px; margin-bottom: 20px;">
+            <p><strong>Aplikasi Pendidikan Hadis Sekolah Rendah</strong></p>
+            <p style="margin-top: 10px;">Permainan ini dibina untuk membantu murid-murid memahami dan mengamalkan nilai-nilai murni daripada himpunan Hadis dalam kehidupan seharian.</p>
+            <p style="margin-top: 10px;"><strong>Disasarkan kepada:</strong> Murid Sekolah Rendah (Tahun 1 - Tahun 6)</p>
+            <p style="margin-top: 10px;"><strong>Ciri-Ciri Utama:</strong> 60 Bank Soalan Beraras (Mudah, Sederhana, Aplikasi, Susah), Sistem Penyimpanan Kemajuan (LocalStorage), Kesan Bunyi Interaktif, dan Rekod Skor.</p>
+        </div>
+        <button class="btn" style="max-width: 200px; margin: 0 auto;" onclick="showScreen('screen-main')">KEMBALI</button>
+    </div>
+
+    <!-- 4. PETA PENGEMBARAAN -->
+    <div id="screen-map" class="screen">
+        <h2 style="text-align: center; color: var(--primary-dark);">🗺️ Peta Pengembaraan Hikmah</h2>
+        <p style="text-align: center; margin-bottom: 15px; font-size: 0.95rem;">Pilih dunia untuk memulakan cabaran ilmu!</p>
+        
+        <div class="map-grid">
+            <!-- DUNIA 1 -->
+            <div id="card-world-1" class="world-card unlocked" onclick="startWorld(1)">
+                <div class="crystal-indicator" id="crystal-1">⚪</div>
+                <div class="world-icon">🌲</div>
+                <div class="world-title">DUNIA 1: HUTAN ILMU</div>
+                <p style="font-size: 0.85rem; color: #555;">Aras Mudah (Soalan 1-20)</p>
+                <div class="world-badge" id="badge-1">Belum Selesai</div>
+            </div>
+
+            <!-- DUNIA 2 -->
+            <div id="card-world-2" class="world-card locked" onclick="startWorld(2)">
+                <div class="crystal-indicator" id="crystal-2">⚪</div>
+                <div class="world-icon">🪨</div>
+                <div class="world-title">DUNIA 2: GUA AMANAH</div>
+                <p style="font-size: 0.85rem; color: #555;">Aras Sederhana (Soalan 21-40)</p>
+                <div class="world-badge" id="badge-2">Terkunci 🔒</div>
+            </div>
+
+            <!-- DUNIA 3 -->
+            <div id="card-world-3" class="world-card locked" onclick="startWorld(3)">
+                <div class="crystal-indicator" id="crystal-3">⚪</div>
+                <div class="world-icon">🏛️</div>
+                <div class="world-title">DUNIA 3: PERPUSTAKAAN HIKMAH</div>
+                <p style="font-size: 0.85rem; color: #555;">Aplikasi & Penaakulan</p>
+                <div class="world-badge" id="badge-3">Terkunci 🔒</div>
+            </div>
+
+            <!-- DUNIA 4 -->
+            <div id="card-world-4" class="world-card locked" onclick="startWorld(4)">
+                <div class="crystal-indicator" id="crystal-4">⚪</div>
+                <div class="world-icon">🏰</div>
+                <div class="world-title">DUNIA 4: ISTANA CAHAYA</div>
+                <p style="font-size: 0.85rem; color: #555;">Aras Susah (Soalan 41-60)</p>
+                <div class="world-badge" id="badge-4">Terkunci 🔒</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 10px;">
+            <button class="btn btn-secondary" onclick="showScreen('screen-main')">⬅️ Skrin Utama</button>
+        </div>
+    </div>
+
+    <!-- 5. SKRIN CABARAN KUIZ -->
+    <div id="screen-quiz" class="screen">
+        <div class="quiz-header">
+            <span id="quiz-world-name">Dunia 1: Hutan Ilmu</span>
+            <span id="quiz-score">Mata: 0</span>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="quiz-progress"></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; font-weight: bold;">
+            <span id="quiz-q-num">Soalan 1 / 5</span>
+            <span id="quiz-diff" style="color: var(--primary-dark);">Aras: Mudah</span>
+        </div>
+
+        <div class="question-card">
+            <div class="question-text" id="question-text">Teks soalan akan dipaparkan di sini...</div>
+        </div>
+
+        <div class="options-grid" id="options-container">
+            <!-- Pilihan jawapan dinamik -->
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 20px; gap: 10px;">
+            <button class="btn btn-warning" style="padding: 10px 18px; font-size: 0.95rem;" onclick="showHint()">💡 Petunjuk</button>
+            <button class="btn btn-secondary" style="padding: 10px 18px; font-size: 0.95rem;" onclick="showScreen('screen-map')">🗺️ Ke Peta</button>
+        </div>
+    </div>
+
+    <!-- 6. SKRIN TAMAT DUNIA -->
+    <div id="screen-world-complete" class="screen" style="text-align: center; justify-content: center;">
+        <h2 id="world-complete-title" style="color: var(--primary-dark);">🎉 DUNIA SELESAI!</h2>
+        <div class="summary-box">
+            <div id="world-complete-icon" style="font-size: 4rem;">💎</div>
+            <h3 id="world-complete-crystal-text">Anda Mendapat Kristal Hijau Hikmah!</h3>
+            <div style="margin: 15px 0; font-size: 1.1rem; line-height: 1.8;">
+                <div>Jumlah Markah Dunia Ini: <strong id="world-complete-score">0</strong></div>
+                <div>Jawapan Betul: <strong id="world-complete-correct">0</strong> / <strong id="world-complete-total">0</strong></div>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button class="btn" onclick="showScreen('screen-map')">🗺️ Teruskan Pengembaraan</button>
+            <button class="btn btn-secondary" onclick="retryCurrentWorld()">🔄 Cuba Lagi Dunia Ini</button>
+        </div>
+    </div>
+
+    <!-- 7. SKRIN KEMENANGAN HAKIKI -->
+    <div id="screen-victory" class="screen" style="text-align: center; justify-content: center;">
+        <h1 style="color: #f57f17; font-size: 2.2rem;">🏆 TAHNIAH, PENGEMBARA HIKMAH!</h1>
+        <p style="font-size: 1.1rem; margin-top: 5px;">Anda berjaya mengumpulkan kesemua 4 Kristal Kebijaksanaan!</p>
+        
+        <div class="crystals-collected">
+            <span title="Kristal Hutan">🟢</span>
+            <span title="Kristal Gua">🔵</span>
+            <span title="Kristal Perpustakaan">🟣</span>
+            <span title="Kristal Istana">🟡</span>
+        </div>
+
+        <div class="summary-box" style="background: #fffde7; border-color: #fbc02d;">
+            <div style="font-size: 1.3rem; font-weight: bold; color: #f57f17; margin-bottom: 8px;">GELARAN: PENGEMBARA HIKMAH AGUNG</div>
+            <div>Jumlah Skor Keseluruhan: <strong id="final-score" style="font-size: 1.4rem; color: var(--primary-dark);">0</strong> / 900 Mata</div>
+            <p style="margin-top: 12px; font-size: 0.95rem; color: #333;">
+                "Semoga ilmu dan pengajaran Hadis yang dipelajari menjadi penyuluh amalan dalam kehidupan seharian anda!"
+            </p>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn" onclick="resetGameProgress()">🎮 Main Semula Dari Awal</button>
+        </div>
+    </div>
+
+    <!-- MODAL MAKLUM BALAS SOALAN -->
+    <div class="modal" id="feedback-modal">
+        <div class="modal-content">
+            <div class="modal-icon" id="modal-icon">✅</div>
+            <h3 id="modal-title" style="color: var(--primary-dark);">Hebat! Jawapan Tepat!</h3>
+            <div class="explanation-box" id="modal-explanation">
+                Penerangan ringkas pengajaran hadis...
+            </div>
+            <div id="modal-teacher-check" class="teacher-note" style="display: none;">
+                ⚠️ PERLU SEMAKAN GURU: Soalan ini memerlukan pengesahan sumber guru Islam.
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="nextQuestion()">Teruskan ➡️</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ==========================================================================
+   BANK SOALAN (60 SOALAN LENGKAP DARIPADA DOKUMEN SOURCE)
+   ========================================================================== */
+const QUESTION_BANK = [
+    // DUNIA 1 — ARAS MUDAH (Soalan 1 - 20)[cite: 1]
+    { id: 1, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah tajuk Hadis 29 dalam bahan yang dibekalkan?', options: ['Konsep Zuhud', 'Jalan ke Syurga', 'Hak Persaudaraan', 'Menghindari Mudarat'], ans: 1, exp: 'Hadis 29 bertajuk Jalan ke Syurga[cite: 1].', hint: 'Tajuk ini berkaitan dengan destinasi impian setiap mukmin.' },
+    { id: 2, world: 1, diff: 'Mudah', pts: 10, q: 'Siapakah sahabat yang bertanya tentang amalan yang membawa ke syurga dalam Hadis 29?', options: ['Abu Hurairah r.a.', 'Ibn Abbas r.a.', 'Mu‘az bin Jabal r.a.', 'Abu Sa‘id al-Khudri r.a.'], ans: 2, exp: 'Mu‘az bin Jabal r.a. bertanya kepada Rasulullah SAW[cite: 1].', hint: 'Sahabat terkenal yang diutus ke Yaman.' },
+    { id: 3, world: 1, diff: 'Mudah', pts: 10, q: 'Antara berikut, yang manakah amalan disebut dalam Hadis 29?', options: ['Mendirikan solat', 'Mengumpul harta sebanyak mungkin', 'Mengejek rakan', 'Mengabaikan orang lain'], ans: 0, exp: 'Mendirikan solat ialah amalan yang disebut dalam hadis[cite: 1].', hint: 'Rukun Islam yang kedua.' },
+    { id: 4, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah yang perlu dilakukan terhadap perkara fardu menurut Hadis 30?', options: ['Mengabaikannya', 'Mengubahnya sesuka hati', 'Melaksanakannya dan tidak mengabaikannya', 'Melakukannya apabila dipuji sahaja'], ans: 2, exp: 'Hadis 30 mengingatkan umat Islam supaya tidak mengabaikan perkara fardu[cite: 1].', hint: 'Kewajipan mesti ditunaikan.' },
+    { id: 5, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah tajuk Hadis 30?', options: ['Jalan ke Syurga', 'Larangan Melampaui Batasan Syarak', 'Konsep Zuhud', 'Asas Penghakiman'], ans: 1, exp: 'Tajuk dalam bahan ialah Larangan Melampaui Batasan Syarak[cite: 1].', hint: 'Mengenai batas hukum yang ditetapkan Allah.' },
+    { id: 6, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah maksud zuhud yang diterangkan dalam bahan Hadis 31?', options: ['Tidak mahu belajar', 'Mesti hidup miskin', 'Tidak membenarkan diri dikuasai cinta dunia', 'Tidak boleh memiliki barang'], ans: 2, exp: 'Zuhud bukan bermaksud mesti miskin; hati tidak dikuasai cinta dunia[cite: 1].', hint: 'Hati tidak terikat dengan kemewahan dunia.' },
+    { id: 7, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah tajuk Hadis 31?', options: ['Konsep dan Faedah Zuhud', 'Jalan ke Syurga', 'Hak Persaudaraan', 'Tanggungjawab Mengubah Kemungkaran'], ans: 0, exp: 'Hadis 31 membincangkan konsep dan faedah zuhud[cite: 1].', hint: 'Berkenaan sifat tidak tamak pada dunia.' },
+    { id: 8, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah tajuk Hadis 32?', options: ['Asas Penghakiman dalam Islam', 'Menghindari Mudarat', 'Hak Persaudaraan Sesama Muslim', 'Jalan ke Syurga'], ans: 1, exp: 'Hadis 32 bertajuk Menghindari Mudarat[cite: 1].', hint: 'Mencegah bahaya dan keburukan.' },
+    { id: 9, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah maksud menghindari mudarat?', options: ['Mencari bahaya', 'Membiarkan orang cedera', 'Mencegah kemudaratan dan mengelakkan bahaya', 'Menyalahkan orang lain'], ans: 2, exp: 'Hadis 32 menekankan pencegahan kemudaratan[cite: 1].', hint: 'Menjaga keselamatan diri dan orang lain.' },
+    { id: 10, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah tajuk Hadis 33?', options: ['Asas Penghakiman dalam Islam', 'Konsep Zuhud', 'Jalan ke Syurga', 'Hak Persaudaraan'], ans: 0, exp: 'Hadis 33 berkaitan asas penghakiman dalam Islam[cite: 1].', hint: 'Keadilan dan keperluan bukti dalam membuat keputusan.' },
+    { id: 11, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah yang perlu ada sebelum seseorang membuat tuduhan terhadap rakannya?', options: ['Cerita daripada orang yang tidak dikenali', 'Bukti yang berkaitan', 'Rasa marah', 'Tekaan sendiri'], ans: 1, exp: 'Jangan membuat tuduhan tanpa bukti[cite: 1].', hint: 'Kenyataan sahih atau saksi yang jelas.' },
+    { id: 12, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah tajuk Hadis 34?', options: ['Tanggungjawab Mengubah Kemungkaran', 'Larangan Melampaui Batasan Syarak', 'Menghindari Mudarat', 'Konsep Zuhud'], ans: 0, exp: 'Hadis 34 membincangkan tanggungjawab mengubah kemungkaran[cite: 1].', hint: 'Membendung perbuatan jahat atau salah.' },
+    { id: 13, world: 1, diff: 'Mudah', pts: 10, q: 'Menurut Hadis 34, apakah yang perlu dilakukan apabila melihat kemungkaran?', options: ['Menyokongnya', 'Menyebarkannya untuk hiburan', 'Mengambil tindakan yang sesuai menurut kemampuan', 'Berpura-pura tidak tahu dalam semua keadaan'], ans: 2, exp: 'Hadis ini mengajar tanggungjawab menangani kemungkaran mengikut kemampuan[cite: 1].', hint: 'Mencegah mengikut keupayaan diri.' },
+    { id: 14, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah tajuk Hadis 35?', options: ['Jalan ke Syurga', 'Hak Persaudaraan Sesama Muslim', 'Konsep Zuhud', 'Asas Penghakiman'], ans: 1, exp: 'Hadis 35 bertajuk Hak Persaudaraan Sesama Muslim[cite: 1].', hint: 'Hubungan kasih sayang sesama Islam.' },
+    { id: 15, world: 1, diff: 'Mudah', pts: 10, q: 'Menurut Hadis 35, seorang Muslim ialah ______ kepada Muslim yang lain.', options: ['Musuh', 'Pesaing dalam segala perkara', 'Saudara', 'Orang asing yang mesti dijauhi'], ans: 2, exp: 'Hadis ini menekankan persaudaraan sesama Muslim[cite: 1].', hint: 'Hubungan kekeluargaan ikatan iman.' },
+    { id: 16, world: 1, diff: 'Mudah', pts: 10, q: 'Antara berikut, yang manakah dilarang dalam persaudaraan sesama Muslim?', options: ['Membantu rakan', 'Menghormati rakan', 'Menghina rakan', 'Menjaga perasaan rakan'], ans: 2, exp: 'Hadis 35 melarang perbuatan menghina sesama Muslim[cite: 1].', hint: 'Mengejek atau merendahkan orang lain.' },
+    { id: 17, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah tindakan yang menunjukkan persaudaraan yang baik?', options: ['Menolong rakan yang memerlukan', 'Menyebarkan rahsia rakan', 'Mengejek kelemahan rakan', 'Mengambil barang rakan'], ans: 0, exp: 'Persaudaraan menuntut sikap saling membantu dan menjaga hak[cite: 1].', hint: 'Sikap ringankan beban sahabat.' },
+    { id: 18, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah tujuan utama mempelajari pengajaran hadis?', options: ['Untuk menghafal tajuk sahaja', 'Untuk diamalkan dalam kehidupan', 'Untuk mendapat hadiah sahaja', 'Untuk mengalahkan semua rakan'], ans: 1, exp: 'Pengajaran hadis perlu difahami dan diamalkan[cite: 1].', hint: 'Menjadikan panduan hidup seharian.' },
+    { id: 19, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah sikap yang sesuai apabila melakukan kesalahan?', options: ['Menyalahkan rakan', 'Menyembunyikan kebenaran', 'Mengakui kesalahan dan memperbaikinya', 'Mengulangi kesalahan'], ans: 2, exp: 'Mengakui kesalahan membantu kita memperbaiki diri; ini aplikasi nilai akhlak[cite: 1].', hint: 'Jujur dan mahu berubah.' },
+    { id: 20, world: 1, diff: 'Mudah', pts: 10, q: 'Apakah pilihan terbaik apabila tidak memahami sesuatu pengajaran hadis?', options: ['Mereka-reka maksud sendiri', 'Bertanya kepada guru atau orang yang berilmu', 'Mengejek hadis itu', 'Mengabaikannya terus'], ans: 1, exp: 'Dapatkan penjelasan daripada guru atau sumber yang dipercayai[cite: 1].', hint: 'Rujuk kepada pembimbing.' },
+
+    // DUNIA 2 — ARAS SEDERHANA (Soalan 21 - 40)[cite: 1]
+    { id: 21, world: 2, diff: 'Sederhana', pts: 15, q: 'Ali berkata, "Kalau aku tidak kaya, aku tidak boleh menjadi seorang yang zuhud." Apakah jawapan yang paling tepat?', options: ['Betul, zuhud hanya untuk orang miskin', 'Salah, zuhud bermaksud hati tidak dikuasai cinta dunia', 'Betul, orang kaya tidak boleh beramal', 'Salah, zuhud bermaksud tidak perlu bekerja'], ans: 1, exp: 'Zuhud tidak semestinya bermaksud miskin[cite: 1].', hint: 'Zuhud ialah kaitan hati, bukan status harta.' },
+    { id: 22, world: 2, diff: 'Sederhana', pts: 15, q: 'Seseorang sengaja meninggalkan solat fardu kerana mahu bermain. Pengajaran manakah paling berkaitan?', options: ['Hadis 29 dan kewajipan amalan fardu', 'Hadis 31 sahaja', 'Hadis 33 sahaja', 'Hadis 35 sahaja'], ans: 0, exp: 'Hadis 29 menyebut mendirikan solat sebagai amalan penting[cite: 1].', hint: 'Ibadah fardu ke syurga.' },
+    { id: 23, world: 2, diff: 'Sederhana', pts: 15, q: 'Rakan mengajak Siti menyebarkan cerita buruk tentang orang lain. Apakah tindakan terbaik?', options: ['Menyebarkannya kepada kelas', 'Menokok tambah cerita', 'Menolak dan tidak menyebarkan cerita yang tidak pasti', 'Membuat cerita yang lebih menarik'], ans: 2, exp: 'Jangan menyebarkan tuduhan atau cerita yang tidak disahkan[cite: 1].', hint: 'Elakkan fitnah dan khabar angin.' },
+    { id: 24, world: 2, diff: 'Sederhana', pts: 15, q: 'Amir melihat beg sekolah diletakkan di tengah laluan sehingga orang boleh tersandung. Apakah tindakan paling sesuai?', options: ['Membiarkannya', 'Mengalihkan beg dengan selamat atau memaklumkan guru', 'Menendang beg itu jauh', 'Menunggu seseorang terjatuh'], ans: 1, exp: 'Tindakan ini mengelakkan kemudaratan[cite: 1].', hint: 'Cegah bahaya fizikal.' },
+    { id: 25, world: 2, diff: 'Sederhana', pts: 15, q: 'Mengapakah perkara yang tidak dinyatakan sebagai larangan dalam Hadis 30 tidak wajar dihukum sesuka hati sebagai haram?', options: ['Kerana semua perkara dibenarkan tanpa batas', 'Kerana kita boleh mencipta hukum sendiri', 'Kerana hukum perlu dirujuk kepada panduan syarak, bukan tekaan', 'Kerana peraturan tidak penting'], ans: 2, exp: 'Jangan mereka-reka hukum; rujuk sumber yang berautoriti[cite: 1].', hint: 'Hukum agama berdasarkan dalil syarak.' },
+    { id: 26, world: 2, diff: 'Sederhana', pts: 15, q: 'Nadia membeli alat tulis yang disukainya tetapi masih bersyukur dan tidak mengabaikan tanggungjawab. Adakah ini semestinya bertentangan dengan zuhud?', options: ['Ya, semua pemilikan dilarang', 'Tidak, zuhud bukan bermaksud tidak boleh memiliki barang', 'Ya, orang zuhud tidak boleh belajar', 'Tidak, kerana zuhud bermaksud mengejar kemewahan'], ans: 1, exp: 'Zuhud ialah keadaan hati, bukan larangan memiliki semua benda[cite: 1].', hint: 'Boleh memiliki alatan selagi bersyukur.' },
+    { id: 27, world: 2, diff: 'Sederhana', pts: 15, q: 'Dua orang murid bertengkar tentang siapa yang mengambil pensel. Apakah prinsip Hadis 33 yang patut diutamakan?', options: ['Terus menghukum murid yang dituduh', 'Mempercayai orang yang paling kuat bercakap', 'Menyiasat dengan adil dan melihat bukti', 'Menghukum kedua-duanya tanpa mendengar penjelasan'], ans: 2, exp: 'Penghakiman memerlukan keadilan dan bukti[cite: 1].', hint: 'Siasatan saksama.' },
+    { id: 28, world: 2, diff: 'Sederhana', pts: 15, q: 'Seorang murid melihat rakannya membuli murid lain. Apakah langkah yang paling sesuai untuk murid sekolah rendah?', options: ['Menyertai pembuli', 'Merakam dan menyebarkan video', 'Membantu mangsa jika selamat dan segera memaklumkan guru', 'Mengugut pembuli seorang diri'], ans: 2, exp: 'Tangani kemungkaran mengikut kemampuan dan dengan cara selamat[cite: 1].', hint: 'Dapatkan bantuan guru.' },
+    { id: 29, world: 2, diff: 'Sederhana', pts: 15, q: 'Apakah contoh mengelakkan mudarat ketika bermain di sekolah?', options: ['Menolak rakan ketika beratur', 'Menggunakan alatan permainan dengan betul', 'Membaling objek ke arah orang', 'Berlari di kawasan berbahaya tanpa melihat'], ans: 1, exp: 'Gunakan alatan dengan selamat dan elakkan bahaya[cite: 1].', hint: 'Main secara selamat.' },
+    { id: 30, world: 2, diff: 'Sederhana', pts: 15, q: 'Mengapakah menghina rakan bercanggah dengan Hadis 35?', options: ['Kerana ia merosakkan persaudaraan dan maruah rakan', 'Kerana semua rakan mesti mempunyai pendapat sama', 'Kerana kita tidak boleh bercakap langsung', 'Kerana hanya guru boleh bercakap'], ans: 0, exp: 'Hadis 35 melarang penghinaan dan menuntut penjagaan hak sesama Muslim[cite: 1].', hint: 'Menjaga maruah dan ikatan persaudaraan.' },
+    { id: 31, world: 2, diff: 'Sederhana', pts: 15, q: 'Farid bersedekah hanya supaya dipuji. Apakah perkara yang patut dia fikirkan semula berdasarkan amalan menuju syurga?', options: ['Warna barang yang disedekahkan', 'Keikhlasan dan tujuan amalannya', 'Bilangan rakan yang melihat', 'Cara mendapatkan pujian lebih banyak'], ans: 1, exp: 'Hadis 29 mengajar amalan ibadah dan ketaatan; keikhlasan ialah nilai penting dalam beramal[cite: 1].', hint: 'Niat ketaatan kerana Allah.' },
+    { id: 32, world: 2, diff: 'Sederhana', pts: 15, q: 'Apakah perbezaan antara zuhud dan tidak bertanggungjawab?', options: ['Tiada perbezaan', 'Zuhud bermaksud mengabaikan keluarga', 'Zuhud tidak dikuasai cinta dunia, tetapi tanggungjawab tetap perlu dilaksanakan', 'Zuhud bermaksud tidak perlu belajar'], ans: 2, exp: 'Zuhud tidak bermaksud meninggalkan kewajipan[cite: 1].', hint: 'Tanggungjawab tetap fardu.' },
+    { id: 33, world: 2, diff: 'Sederhana', pts: 15, q: 'Rakan tersilap menjawab soalan di hadapan kelas. Apakah tindakan yang paling mencerminkan persaudaraan?', options: ['Ketawa dan mengejek', 'Menyebarkan kesilapannya', 'Memberi galakan dan membantu dengan sopan', 'Memanggilnya dengan gelaran buruk'], ans: 2, exp: 'Saling menghormati dan tidak menghina rakan[cite: 1].', hint: 'Sokong rakan ketika susah.' },
+    { id: 34, world: 2, diff: 'Sederhana', pts: 15, q: 'Seorang murid nampak kerosakan pada soket elektrik. Apakah pilihan paling selamat?', options: ['Menyentuhnya untuk menguji', 'Menyuruh rakan mencubanya', 'Menjauhi kawasan itu dan melaporkan kepada guru', 'Menyimbah air padanya'], ans: 2, exp: 'Mencegah kemudaratan termasuk menjauhkan diri daripada bahaya dan melaporkannya[cite: 1].', hint: 'Elakkan bahaya elektrik.' },
+    { id: 35, world: 2, diff: 'Sederhana', pts: 15, q: 'Mengapa kita tidak patut membuat keputusan berdasarkan khabar angin sahaja?', options: ['Khabar angin sentiasa betul', 'Ia boleh menyebabkan tuduhan tidak adil', 'Ia menjimatkan masa dalam semua keadaan', 'Ia menjadikan kita popular'], ans: 1, exp: 'Hadis 33 menekankan asas penghakiman yang adil[cite: 1].', hint: 'Elakkan fitnah tanpa bukti.' },
+    { id: 36, world: 2, diff: 'Sederhana', pts: 15, q: 'Apakah tindakan yang paling sesuai apabila rakan melakukan kesalahan kecil?', options: ['Mengaibkannya di hadapan semua orang', 'Menyebarkannya dalam kumpulan kelas', 'Menegur secara baik atau meminta bantuan guru jika perlu', 'Membalas dengan kesalahan lain'], ans: 2, exp: 'Teguran hendaklah berhemah dan bertujuan memperbaiki keadaan[cite: 1].', hint: 'Tegur secara sopan.' },
+    { id: 37, world: 2, diff: 'Sederhana', pts: 15, q: 'Mengapakah kewajipan fardu tidak boleh sengaja diabaikan kerana kesibukan?', options: ['Kerana Hadis 30 menegaskan kewajipan perlu dijaga', 'Kerana kesibukan sentiasa dilarang', 'Kerana hanya murid perlu melakukan fardu', 'Kerana semua aktiviti lain tidak dibenarkan'], ans: 0, exp: 'Hadis 30 mengingatkan supaya tidak mengabaikan perkara fardu[cite: 1].', hint: 'Fardu tetap diutamakan.' },
+    { id: 38, world: 2, diff: 'Sederhana', pts: 15, q: 'Murid A mengambil barang murid B tanpa izin. Prinsip manakah paling berkaitan?', options: ['Menghormati hak orang lain dan tidak menzalimi', 'Mengejar kemewahan', 'Melampaui batas secara sengaja', 'Mencari pujian'], ans: 0, exp: 'Hadis 35 melarang kezaliman terhadap sesama Muslim[cite: 1].', hint: 'Hormati hak milik orang lain.' },
+    { id: 39, world: 2, diff: 'Sederhana', pts: 15, q: 'Apakah tindakan terbaik apabila tidak pasti sama ada sesuatu perkara memudaratkan orang lain?', options: ['Terus melakukannya', 'Bertanya kepada guru dan memilih langkah selamat', 'Mencuba pada rakan', 'Mengabaikan semua nasihat'], ans: 1, exp: 'Dapatkan panduan dan elakkan risiko yang tidak perlu[cite: 1].', hint: 'Utamakan langkah selamat.' },
+    { id: 40, world: 2, diff: 'Sederhana', pts: 15, q: 'Apakah maksud mengamalkan hadis dalam kehidupan seharian?', options: ['Menyebut tajuk hadis sahaja', 'Menghafal tanpa memahami', 'Menggunakan pengajarannya untuk membimbing tindakan', 'Membaca hanya ketika pertandingan'], ans: 2, exp: 'Ilmu hadis perlu diterjemahkan kepada amalan[cite: 1].', hint: 'Tindakan berasaskan ikhtibar hadis.' },
+
+    // DUNIA 3 — APLIKASI & PENAAKULAN (Kombinasi soalan aplikasi)[cite: 1]
+    // Nota: Menggunakan set soalan aplikasi daripada Bank Soalan[cite: 1].
+    
+    // DUNIA 4 — ARAS SUSAH (Soalan 41 - 60)[cite: 1]
+    { id: 41, world: 4, diff: 'Susah', pts: 20, q: 'Hana melihat seorang murid mengejek rakannya. Hana berasa takut untuk menegur sendiri. Apakah tindakan yang paling wajar?', options: ['Menyertai ejekan supaya tidak dipulaukan', 'Memaklumkan guru dan membantu rakan dengan cara yang selamat', 'Menyebarkan ejekan kepada kelas lain', 'Membalas dengan mengejek murid itu'], ans: 1, exp: 'Hadis 34 mengajar tindakan mengikut kemampuan; keselamatan dan bantuan orang dewasa penting[cite: 1].', hint: 'Dapatkan tindakan selamat orang dewasa.' },
+    { id: 42, world: 4, diff: 'Susah', pts: 20, q: 'Seorang murid dituduh merosakkan buku, tetapi tiada sesiapa melihat kejadian itu. Apakah langkah paling adil?', options: ['Terus menghukumnya', 'Menyebarkan tuduhan', 'Mendengar penjelasan dan menyemak bukti sebelum membuat kesimpulan', 'Meminta murid itu mengaku walaupun tidak melakukannya'], ans: 2, exp: 'Hadis 33 mengajar asas penghakiman yang adil dan keperluan bukti[cite: 1].', hint: 'Perlu bukti sahih.' },
+    { id: 43, world: 4, diff: 'Susah', pts: 20, q: 'Rakan kamu memiliki kasut baharu. Kamu berasa iri hati lalu bercadang merosakkannya. Apakah tindakan yang paling selaras dengan pengajaran persaudaraan?', options: ['Merosakkannya secara senyap', 'Menyebarkan cerita buruk tentangnya', 'Mengawal perasaan, menghormati haknya dan bersyukur atas nikmat sendiri', 'Memaksa rakan memberikan kasut itu'], ans: 2, exp: 'Hormati hak orang lain dan elakkan perbuatan yang menzalimi atau menyakiti[cite: 1].', hint: 'Kawal dengki, bersyukur.' },
+    { id: 44, world: 4, diff: 'Susah', pts: 20, q: 'Seorang murid rajin membeli barang mahal untuk dipuji, tetapi mengabaikan solat dan tugas sekolah. Apakah rumusan terbaik berdasarkan Hadis 29 dan 31?', options: ['Barang mahal ialah tanda zuhud', 'Dia perlu mengutamakan kewajipan dan tidak membiarkan cinta dunia menguasai diri', 'Dia perlu membeli lebih banyak barang', 'Dia tidak boleh memiliki sebarang barang'], ans: 1, exp: 'Hadis 29 menekankan amalan ketaatan; Hadis 31 mengajar agar tidak dikuasai cinta dunia[cite: 1].', hint: 'Utamakan fardu, kawal nafsu harta.' },
+    { id: 45, world: 4, diff: 'Susah', pts: 20, q: 'Dua murid memberikan cerita yang bercanggah tentang satu kejadian. Apakah pendekatan paling adil?', options: ['Memilih cerita sahabat karib', 'Memilih cerita murid yang lebih popular', 'Mendengar kedua-dua pihak dan meneliti bukti yang berkaitan', 'Menghukum kedua-duanya tanpa siasatan'], ans: 2, exp: 'Keadilan memerlukan pertimbangan yang saksama, bukan populariti[cite: 1].', hint: 'Dengar dua-dua pihak.' },
+    { id: 46, world: 4, diff: 'Susah', pts: 20, q: 'Rakan mengajak kamu melanggar peraturan keselamatan untuk mendapatkan markah permainan. Apakah keputusan terbaik?', options: ['Bersetuju kerana markah penting', 'Menolak tindakan berbahaya dan memilih cara yang selamat', 'Melakukannya jika guru tidak nampak', 'Mengajak murid lain turut serta'], ans: 1, exp: 'Hadis 32 menekankan menghindari kemudaratan[cite: 1].', hint: 'Keselamatan melebihi permainan.' },
+    { id: 47, world: 4, diff: 'Susah', pts: 20, q: 'Seorang murid mahu membantu rakan yang dibuli tetapi keadaan semakin tidak selamat. Apakah pilihan paling bertanggungjawab?', options: ['Menyerang pembuli', 'Membiarkan mangsa tanpa bantuan', 'Mendapatkan bantuan guru atau orang dewasa dengan segera', 'Menyebarkan rakaman kejadian'], ans: 2, exp: 'Menangani kemungkaran perlu dilakukan mengikut kemampuan dan dengan cara yang selamat[cite: 1].', hint: 'Bantuan guru.' },
+    { id: 48, world: 4, diff: 'Susah', pts: 20, q: 'Mengapa tidak tepat untuk menyamakan zuhud dengan membenci semua harta benda?', options: ['Kerana zuhud hanya untuk orang dewasa', 'Kerana zuhud ialah hati yang tidak dikuasai cinta dunia, bukan semestinya hidup tanpa harta', 'Kerana zuhud bermaksud membeli apa sahaja', 'Kerana zuhud melarang semua bentuk pekerjaan'], ans: 1, exp: 'Ini sejajar dengan penjelasan Hadis 31 dalam bahan[cite: 1].', hint: 'Harta di tangan, bukan di hati.' },
+    { id: 49, world: 4, diff: 'Susah', pts: 20, q: 'Seseorang menyebarkan tuduhan terhadap rakan tanpa memeriksa kebenarannya. Apakah dua nilai yang terjejas?', options: ['Keadilan dan persaudaraan', 'Kekayaan dan keberanian', 'Kepantasan dan persaingan', 'Kreativiti dan kecergasan'], ans: 0, exp: 'Tuduhan tanpa bukti menjejaskan keadilan dan boleh merosakkan persaudaraan[cite: 1].', hint: 'Keadilan & ukhuwah.' },
+    { id: 50, world: 4, diff: 'Susah', pts: 20, q: 'Kamu mendapati satu permainan kelas menyebabkan beberapa murid hampir tercedera. Apakah tindakan yang paling sesuai?', options: ['Meneruskan permainan kerana semua seronok', 'Mengubah atau menghentikan aktiviti berbahaya dan memaklumkan guru', 'Menyalahkan murid yang hampir tercedera', 'Menunggu sehingga berlaku kemalangan'], ans: 1, exp: 'Mencegah bahaya lebih baik daripada membiarkan kemudaratan berlaku[cite: 1].', hint: 'Cegah sebelum parah.' },
+    { id: 51, world: 4, diff: 'Susah', pts: 20, q: 'Seorang murid beribadah hanya apabila guru melihatnya. Apakah soalan refleksi paling sesuai berdasarkan pengajaran Hadis 29?', options: ['Bagaimanakah aku boleh mendapat lebih banyak pujian?', 'Adakah aku menjaga kewajipan dengan bersungguh-sungguh, bukan sekadar untuk dipuji?', 'Bagaimanakah aku boleh mengelakkan semua tanggungjawab?', 'Siapakah yang boleh aku salahkan?'], ans: 1, exp: 'Soalan ini mengajak murid menilai ketaatan dan tujuan amalannya[cite: 1].', hint: 'Keikhlasan amalan.' },
+    { id: 52, world: 4, diff: 'Susah', pts: 20, q: 'Kamu mendengar khabar angin bahawa rakan mengambil wang kelas. Apakah urutan tindakan terbaik?', options: ['Sebarkan dahulu, kemudian tanya', 'Tuduh di hadapan semua murid', 'Jangan sebarkan; maklumkan guru dan biarkan perkara disemak dengan adil', 'Paksa rakan memulangkan wang walaupun tiada bukti'], ans: 2, exp: 'Jangan membuat keputusan sendiri berdasarkan khabar angin; rujuk guru dan bukti[cite: 1].', hint: 'Semak dulu & jumpa guru.' },
+    { id: 53, world: 4, diff: 'Susah', pts: 20, q: 'Apakah gabungan tindakan yang paling menepati Hadis 30 dan Hadis 32?', options: ['Menjaga kewajipan serta mengelakkan perbuatan yang memudaratkan', 'Mengabaikan kewajipan demi keseronokan', 'Mereka-reka hukum dan membahayakan rakan', 'Mementingkan diri tanpa mempedulikan orang lain'], ans: 0, exp: 'Hadis 30 menekankan perkara fardu dan batas syarak; Hadis 32 menekankan pencegahan mudarat[cite: 1].', hint: 'Jaga fardu + jauh mudarat.' },
+    { id: 54, world: 4, diff: 'Susah', pts: 20, q: 'Seorang murid menghina rakan kerana keputusan peperiksaan yang rendah. Apakah tindak balas yang paling membina?', options: ['Menghina semula', 'Mengajak orang lain memulaukannya', 'Menegur dengan sopan dan membantu rakan yang dihina', 'Membalas dengan menyebarkan rahsianya'], ans: 2, exp: 'Hadis 35 menekankan persaudaraan dan larangan menghina[cite: 1].', hint: 'Bantu dan beri dorongan.' },
+    { id: 55, world: 4, diff: 'Susah', pts: 20, q: 'Guru meminta murid menyelesaikan pertikaian tentang barang yang hilang. Mengapa bukti dan penjelasan penting?', options: ['Supaya murid paling popular menang', 'Supaya keputusan dibuat dengan adil dan tidak menzalimi sesiapa', 'Supaya keputusan boleh dibuat lebih keras', 'Supaya cerita paling menarik diterima'], ans: 1, exp: 'Asas penghakiman memerlukan keadilan dan bukti yang berkaitan[cite: 1].', hint: 'Elak kezaliman.' },
+    { id: 56, world: 4, diff: 'Susah', pts: 20, q: 'Apakah pilihan paling tepat apabila kamu tidak tahu hukum sesuatu perkara yang rumit?', options: ['Mengisytiharkan hukum sendiri', 'Mengikut khabar angin', 'Merujuk guru agama atau sumber berautoriti dan tidak membuat dakwaan tanpa asas', 'Menyalahkan orang yang bertanya'], ans: 2, exp: 'Jangan mereka-reka hukum; dapatkan penjelasan yang tepat[cite: 1].', hint: 'Bertanya kepada pakar.' },
+    { id: 57, world: 4, diff: 'Susah', pts: 20, q: 'Seorang murid melihat rakan melakukan kesalahan, lalu terus menyiarkan video untuk memalukannya. Apakah masalah utama tindakan itu?', options: ['Ia menyelesaikan masalah dengan sempurna', 'Ia mungkin mengaibkan orang dan tidak semestinya membetulkan kemungkaran', 'Ia sentiasa diwajibkan', 'Ia menunjukkan persaudaraan yang baik'], ans: 1, exp: 'Menangani kemungkaran perlu berhemah, berkesan dan tidak menambah kemudaratan[cite: 1].', hint: 'Aib bukan perbetul kesalahan.' },
+    { id: 58, world: 4, diff: 'Susah', pts: 20, q: 'Apakah contoh paling baik menggabungkan pengajaran Hadis 31 dan Hadis 35?', options: ['Membanggakan harta dan menghina rakan', 'Berkongsi bantuan dengan ikhlas tanpa merendahkan penerima', 'Membantu rakan supaya dipuji sahaja', 'Menolak semua tanggungjawab kerana mahu zuhud'], ans: 1, exp: 'Zuhud tidak dikuasai cinta dunia, manakala persaudaraan menuntut penghormatan dan bantuan[cite: 1].', hint: 'Ikhlas + bersaudara.' },
+    { id: 59, world: 4, diff: 'Susah', pts: 20, q: 'Seorang murid mahu mengubah tingkah laku salah rakan tetapi bimbang tindakannya memburukkan keadaan. Apakah pertimbangan utama?', options: ['Memilih cara yang paling memalukan', 'Memastikan tindakan sesuai dengan kemampuan, selamat dan bertujuan memperbaiki keadaan', 'Mengugut rakan', 'Menyebarkan cerita kepada semua orang'], ans: 1, exp: 'Hadis 34 menekankan tanggungjawab mengubah kemungkaran; cara bertindak perlu sesuai dan selamat[cite: 1].', hint: 'Selamat dan bina hikmah.' },
+    { id: 60, world: 4, diff: 'Susah', pts: 20, q: 'Apakah rumusan paling menyeluruh daripada Hadis 29 hingga 35 yang dapat digunakan dalam kehidupan murid?', options: ['Kejayaan hanya bergantung pada markah', 'Ibadah, mematuhi batas syarak, mengelakkan mudarat, berlaku adil dan menjaga persaudaraan semuanya penting', 'Kita hanya perlu menghafal nombor hadis', 'Kita boleh membuat keputusan tanpa bukti jika yakin'], ans: 1, exp: 'Rumusan ini merangkumi tema utama hadis yang dikenal pasti dalam bahan[cite: 1].', hint: 'Gabungan nilai ketaatan dan akhlak.' }
+];
+
+/* ==========================================================================
+   KEADAAN GAME (GAME STATE)
+   ========================================================================== */
+let gameState = {
+    soundEnabled: true,
+    currentMode: 'adventure', // 'adventure', 'practice', 'full'
+    unlockedWorld: 1,
+    worldScores: { 1: 0, 2: 0, 3: 0, 4: 0 },
+    crystals: { 1: false, 2: false, 3: false, 4: false },
+    currentWorld: 1,
+    activeQuestions: [],
+    currentQIndex: 0,
+    currentWorldScore: 0,
+    currentWorldCorrect: 0,
+    answeredInSession: false
+};
+
+// Pengurusan Audio (Web Audio API Synthesizer)
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function playSound(type) {
+    if (!gameState.soundEnabled) return;
+    try {
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'correct') {
+            osc.frequency.setValueAtTime(523.25, now); // C5
+            osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            osc.start(now);
+            osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+            osc.start(now);
+            osc.stop(now + 0.25);
+        } else if (type === 'crystal') {
+            osc.frequency.setValueAtTime(440, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.start(now);
+            osc.stop(now + 0.4);
+        }
+    } catch (e) {
+        console.log('Audio Context error:', e);
+    }
+}
+
+function toggleSound() {
+    gameState.soundEnabled = !gameState.soundEnabled;
+    document.getElementById('sound-btn').innerText = gameState.soundEnabled ? '🔊 Bunyi: ON' : '🔇 Bunyi: OFF';
+}
+
+/* ==========================================================================
+   FUNGSI ALIRAN SKRIN & PENGURUSAN PETA
+   ========================================================================== */
+function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    
+    if (screenId === 'screen-map') {
+        updateMapUI();
+    }
+}
+
+function selectMode(mode) {
+    gameState.currentMode = mode;
+    if (mode === 'full') {
+        startFullChallenge();
+    } else {
+        showScreen('screen-map');
+    }
+}
+
+function updateMapUI() {
+    for (let w = 1; w <= 4; w++) {
+        const card = document.getElementById(`card-world-${w}`);
+        const badge = document.getElementById(`badge-${w}`);
+        const crystal = document.getElementById(`crystal-${w}`);
+
+        if (w <= gameState.unlockedWorld) {
+            card.className = 'world-card unlocked';
+            if (gameState.crystals[w]) {
+                badge.innerText = 'Selesai ✨';
+                badge.style.background = '#c8e6c9';
+                crystal.innerText = getCrystalEmoji(w);
+            } else {
+                badge.innerText = 'Boleh Dimainkan 🎮';
+                badge.style.background = '#e8f5e9';
+                crystal.innerText = '⚪';
+            }
+        } else {
+            card.className = 'world-card locked';
+            badge.innerText = 'Terkunci 🔒';
+            badge.style.background = '#eee';
+            crystal.innerText = '⚪';
+        }
+    }
+}
+
+function getCrystalEmoji(w) {
+    const list = { 1: '🟢', 2: '🔵', 3: '🟣', 4: '🟡' };
+    return list[w] || '💎';
+}
+
+/* ==========================================================================
+   LOGIK CABARAN & KUIZ
+   ========================================================================== */
+function startWorld(worldNum) {
+    if (worldNum > gameState.unlockedWorld) return;
+
+    gameState.currentWorld = worldNum;
+    gameState.currentWorldScore = 0;
+    gameState.currentWorldCorrect = 0;
+    gameState.currentQIndex = 0;
+
+    let available = [];
+    if (worldNum === 1) available = QUESTION_BANK.filter(q => q.id <= 20);
+    else if (worldNum === 2) available = QUESTION_BANK.filter(q => q.id >= 21 && q.id <= 40);
+    else if (worldNum === 3) available = QUESTION_BANK.filter(q => q.id >= 21 && q.id <= 40); // Soalan aplikasi
+    else if (worldNum === 4) available = QUESTION_BANK.filter(q => q.id >= 41 && q.id <= 60);
+
+    if (gameState.currentMode === 'adventure') {
+        // Ambil 5 soalan rawak tanpa ulangan
+        available = [...available].sort(() => 0.5 - Math.random()).slice(0, 5);
+    }
+
+    gameState.activeQuestions = available;
+    showScreen('screen-quiz');
+    loadQuestion();
+}
+
+function startFullChallenge() {
+    gameState.currentWorld = 1;
+    gameState.currentWorldScore = 0;
+    gameState.currentWorldCorrect = 0;
+    gameState.currentQIndex = 0;
+    gameState.activeQuestions = [...QUESTION_BANK];
+    showScreen('screen-quiz');
+    loadQuestion();
+}
+
+function loadQuestion() {
+    gameState.answeredInSession = false;
+    const q = gameState.activeQuestions[gameState.currentQIndex];
+
+    document.getElementById('quiz-world-name').innerText = `Dunia ${gameState.currentWorld}: ${getWorldName(gameState.currentWorld)}`;
+    document.getElementById('quiz-score').innerText = `Mata: ${calculateTotalScore()}`;
+    document.getElementById('quiz-q-num').innerText = `Soalan ${gameState.currentQIndex + 1} / ${gameState.activeQuestions.length}`;
+    document.getElementById('quiz-diff').innerText = `Aras: ${q.diff}`;
+    document.getElementById('question-text').innerText = `${q.id}. ${q.q}`;
+
+    // Kemaskini Bar Kemajuan
+    const progressPercent = ((gameState.currentQIndex) / gameState.activeQuestions.length) * 100;
+    document.getElementById('quiz-progress').style.width = `${progressPercent}%`;
+
+    // Bina Pilihan Jawapan
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+    const prefixes = ['A', 'B', 'C', 'D'];
+
+    q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.onclick = () => checkAnswer(idx);
+        btn.innerHTML = `
+            <div class="option-prefix">${prefixes[idx]}</div>
+            <div>${optText}</div>
+        `;
+        container.appendChild(btn);
+    });
+}
+
+function checkAnswer(selectedIndex) {
+    if (gameState.answeredInSession) return;
+    gameState.answeredInSession = true;
+
+    const q = gameState.activeQuestions[gameState.currentQIndex];
+    const isCorrect = (selectedIndex === q.ans);
+
+    const modal = document.getElementById('feedback-modal');
+    const modalIcon = document.getElementById('modal-icon');
+    const modalTitle = document.getElementById('modal-title');
+    const modalExp = document.getElementById('modal-explanation');
+
+    if (isCorrect) {
+        playSound('correct');
+        modalIcon.innerText = '✅';
+        modalTitle.innerText = 'Hebat! Anda Berjaya!';
+        modalTitle.style.color = 'var(--primary-dark)';
+        gameState.currentWorldScore += q.pts;
+        gameState.currentWorldCorrect++;
+    } else {
+        playSound('wrong');
+        modalIcon.innerText = '💡';
+        modalTitle.innerText = 'Mari Fahami Pengajarannya!';
+        modalTitle.style.color = '#e65100';
+    }
+
+    modalExp.innerText = q.exp;
+    modal.classList.add('active');
+}
+
+function nextQuestion() {
+    document.getElementById('feedback-modal').classList.remove('active');
+    gameState.currentQIndex++;
+
+    if (gameState.currentQIndex < gameState.activeQuestions.length) {
+        loadQuestion();
+    } else {
+        finishWorld();
+    }
+}
+
+function showHint() {
+    const q = gameState.activeQuestions[gameState.currentQIndex];
+    alert(`💡 PETUNJUK HIKMAH:\n${q.hint}`);
+}
+
+function getWorldName(w) {
+    const names = { 1: 'Hutan Ilmu', 2: 'Gua Amanah', 3: 'Perpustakaan Hikmah', 4: 'Istana Cahaya' };
+    return names[w] || 'Pengembaraan';
+}
+
+function calculateTotalScore() {
+    return Object.values(gameState.worldScores).reduce((a, b) => a + b, 0) + gameState.currentWorldScore;
+}
+
+/* ==========================================================================
+   PENYELESAIAN DUNIA & KEMENANGAN
+   ========================================================================== */
+function finishWorld() {
+    const w = gameState.currentWorld;
+    gameState.worldScores[w] = Math.max(gameState.worldScores[w] || 0, gameState.currentWorldScore);
+    gameState.crystals[w] = true;
+
+    playSound('crystal');
+
+    if (w < 4 && gameState.unlockedWorld < w + 1) {
+        gameState.unlockedWorld = w + 1;
+    }
+
+    saveProgress();
+
+    // Semak jika semua dunia telah selesai
+    if (Object.values(gameState.crystals).filter(Boolean).length === 4) {
+        showVictoryScreen();
+    } else {
+        document.getElementById('world-complete-title').innerText = `🎉 DUNIA ${w} SELESAI!`;
+        document.getElementById('world-complete-icon').innerText = getCrystalEmoji(w);
+        document.getElementById('world-complete-crystal-text').innerText = `Anda Mendapat Kristal Kebijaksanaan Dunia ${w}!`;
+        document.getElementById('world-complete-score').innerText = gameState.currentWorldScore;
+        document.getElementById('world-complete-correct').innerText = gameState.currentWorldCorrect;
+        document.getElementById('world-complete-total').innerText = gameState.activeQuestions.length;
+
+        showScreen('screen-world-complete');
+    }
+}
+
+function retryCurrentWorld() {
+    startWorld(gameState.currentWorld);
+}
+
+function showVictoryScreen() {
+    document.getElementById('final-score').innerText = calculateTotalScore();
+    showScreen('screen-victory');
+}
+
+/* ==========================================================================
+   PENYIMPANAN DATA (LOCALSTORAGE) & TETAP SEMULA
+   ========================================================================== */
+function saveProgress() {
+    try {
+        localStorage.setItem('hadis40_game_state', JSON.stringify({
+            unlockedWorld: gameState.unlockedWorld,
+            worldScores: gameState.worldScores,
+            crystals: gameState.crystals
+        }));
+    } catch (e) {
+        console.log('Tidak dapat menyimpan data kemajuan:', e);
+    }
+}
+
+function loadProgress() {
+    try {
+        const saved = localStorage.getItem('hadis40_game_state');
+        if (saved) {
+            const data = JSON.parse(saved);
+            gameState.unlockedWorld = data.unlockedWorld || 1;
+            gameState.worldScores = data.worldScores || { 1: 0, 2: 0, 3: 0, 4: 0 };
+            gameState.crystals = data.crystals || { 1: false, 2: false, 3: false, 4: false };
+        }
+    } catch (e) {
+        console.log('Ralat memuatkan simpanan:', e);
+    }
+}
+
+function confirmReset() {
+    if (confirm('Adakah anda pasti mahu menetapkan semula seluruh kemajuan pengembaraan anda?')) {
+        resetGameProgress();
+    }
+}
+
+function resetGameProgress() {
+    gameState.unlockedWorld = 1;
+    gameState.worldScores = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    gameState.crystals = { 1: false, 2: false, 3: false, 4: false };
+    localStorage.removeItem('hadis40_game_state');
+    showScreen('screen-main');
+}
+
+// Inisialisasi Aplikasi pada Beban Halaman
+window.onload = function() {
+    loadProgress();
+};
+</script>
+</body>
+</html>
